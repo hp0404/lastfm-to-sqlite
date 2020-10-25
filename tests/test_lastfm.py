@@ -1,7 +1,7 @@
 import os
 import json
 import pytest
-from datetime import datetime
+import datetime
 from lastfm.export import get_metadata, export_page, convert_to_timestamp, DATE_FORMAT
 
 
@@ -16,7 +16,7 @@ def page():
 
 @pytest.fixture
 def date():
-    return datetime.today().strftime(DATE_FORMAT)
+    return datetime.datetime.today().strftime(DATE_FORMAT)
 
     
 def test_get_metadata(page):
@@ -35,5 +35,5 @@ def test_export_page(page):
     
     
 def test_convert_to_timestamp(date):
-    assert isinstance(date, str)
+    assert isinstance(date, (str, datetime.date))
     assert isinstance(convert_to_timestamp(date), int)
