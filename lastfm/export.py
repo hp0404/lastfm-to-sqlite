@@ -12,6 +12,8 @@ DATE_FORMAT = "%Y-%m-%d"
 
 
 def convert_to_timestamp(date):
+    """ Convert human-readable `date` as either `datetime.date` or `str` to 
+        Unix Timestamp. """
     if isinstance(date, datetime.date):
         return int(date.timestamp())
     else:
@@ -19,10 +21,12 @@ def convert_to_timestamp(date):
 
 
 def get_metadata(page):
+    """ Access requests' metadata containing total number of pages. """
     return page["recenttracks"]["@attr"]
 
 
 def export_page(page):
+    """ Scrape specific information regarding each song in a playlist. """
     playlist = page["recenttracks"]["track"]
     for song in playlist:
         yield {
@@ -35,6 +39,7 @@ def export_page(page):
         
 
 def fetch(session, params, meta):
+    """ Fetch each page and export data using `export_page`. """
     next_page, last_page = params["page"], int(meta["totalPages"])
     while next_page <= last_page:
         params["page"] = next_page
@@ -52,6 +57,7 @@ def get_users_recent_tracks(
     start_date=None,
     end_date=None
 ):
+    """ Export user's track history given the parametrs. """
     params = {
         "method": "user.getrecenttracks",
         "user": user,
@@ -68,8 +74,12 @@ def get_users_recent_tracks(
     
     r = requests.get(URL, params=params)
     r.raise_for_status()
-    meta = get_metadata(r.json())
+    
+    data = r.json()
+    meta = get_metadata(data)
+    yield from export_page(data)
     
     with requests.Session() as session:
+        params["page"] += 1
         yield from fetch(session, params, meta)
     
