@@ -68,8 +68,12 @@ def get_users_recent_tracks(
     
     r = requests.get(URL, params=params)
     r.raise_for_status()
-    meta = get_metadata(r.json())
+    
+    data = r.json()
+    meta = get_metadata(data)
+    yield from export_page(data)
     
     with requests.Session() as session:
+        params["page"] += 1
         yield from fetch(session, params, meta)
     
