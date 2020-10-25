@@ -1,0 +1,9 @@
+# local package
+-e .
+
+# external requirements
+click
+requests
+sqlite-utils
+python-dotenv
+pytest
