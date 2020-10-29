@@ -9,8 +9,9 @@ Welcome to lastfm's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   source/lastfm.rst
 
+   source/lastfm.rst
+   source/modules.rst
 
 
 Indices and tables
