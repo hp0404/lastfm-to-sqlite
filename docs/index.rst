@@ -6,19 +6,21 @@
 Welcome to lastfm's documentation!
 ==================================
 
+This tools is a simple wrapper around Last.FM API 
+that allows you to export user's listening history to a SQLite database. 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   readme.rst
    installation.rst
    usage.rst
    source/modules.rst
 
 
-Indices and tables
-==================
+.. Indices and tables
+.. ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. * :ref:`genindex`
+.. * :ref:`modindex`
+.. * :ref:`search`

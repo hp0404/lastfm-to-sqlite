@@ -13,3 +13,4 @@ run.py
 lastfm_dump
 lastfm_dump_whole
 **/*.ipynb_checkpoints
+**/*.vscode
