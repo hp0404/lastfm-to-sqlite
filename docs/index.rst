@@ -10,6 +10,9 @@ Welcome to lastfm's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   lasfm.rst
+   modules.rst
+
 
 
 Indices and tables
