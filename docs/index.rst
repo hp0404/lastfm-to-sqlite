@@ -10,7 +10,9 @@ Welcome to lastfm's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   source/lastfm.rst
+   readme.rst
+   installation.rst
+   usage.rst
    source/modules.rst
 
 
