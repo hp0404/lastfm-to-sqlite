@@ -10,7 +10,7 @@ Welcome to lastfm's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   lasfm.rst
+   lastfm.rst
    modules.rst
 
 
