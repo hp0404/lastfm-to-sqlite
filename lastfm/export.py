@@ -16,8 +16,7 @@ def convert_to_timestamp(date):
         Unix Timestamp. """
     if isinstance(date, datetime.date):
         return int(date.timestamp())
-    else:
-        return int(datetime.datetime.strptime(date, DATE_FORMAT).timestamp())
+    return int(datetime.datetime.strptime(date, DATE_FORMAT).timestamp())
 
 
 def get_metadata(page):
