@@ -27,7 +27,10 @@ setup(
     version=VERSION,
     packages=["lastfm"],
     install_requires=[],
-    extras_require={"test": ["pytest"]},
+    extras_require={
+        "test": ["pytest"],
+        "docs": ["sphinx", "sphinx-rtd-theme"]
+    },
     tests_require=["lastfm[test]"],
     python_requires=">=3.6",
 )
