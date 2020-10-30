@@ -1,8 +1,10 @@
 # lastfm
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/hp0404/lastfm/blob/main/LICENSE)
+[![Documentation Status](https://readthedocs.org/projects/lastfm/badge/?version=latest)](https://lastfm.readthedocs.io/en/latest/?badge=latest)
 
-Scrape [LAST.FM](https://www.last.fm/) user's playlists to SQLite
+
+Scrape [LAST.FM](https://www.last.fm/) user's playlists to SQLite. Docs: https://lastfm.readthedocs.io/en/latest/
 
 ## Usage
 
