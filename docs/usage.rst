@@ -32,5 +32,5 @@ Click API
 ---------
 To run script as a command-line tool, use CLI functionality that explicitly uses database to store data
 :: 
-    python lastfm/cli.py export output.db --user way4music --start_date 2020-10-01 --end_date 2020-10-29
+    lastfm export output.db --user way4music --start_date 2020-10-01 --end_date 2020-10-29
 ::

@@ -14,13 +14,13 @@ Add your [LAST.FM api-key](https://www.last.fm/api) to `.env` file:
 
 Now run CLI:
 
-    python lastfm/cli.py export lastfm_dump --user Way4Music
+    lastfm export lastfm_dump --user Way4Music
 
 That will use (or create) a SQLite database called `lastfm_dump` and a table called `playlist` to export user's entire playlist. 
 
 To scrape specific dates, use `--start_date` and `--end_date`:
 
-    python lastfm/cli.py export lastfm_dump --user way4music --start_date 2020-10-15 --end_date 2020-10-25
+    lastfm export lastfm_dump --user way4music --start_date 2020-10-15 --end_date 2020-10-25
 
 
 
