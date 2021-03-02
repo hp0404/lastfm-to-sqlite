@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import click
 from sqlite_utils import Database
 from lastfm.export import get_users_recent_tracks, DATE_FORMAT
