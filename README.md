@@ -1,6 +1,7 @@
 # lastfm
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/hp0404/lastfm/blob/main/LICENSE)
+[![codecov](https://codecov.io/gh/hp0404/lastfm-to-sqlite/branch/main/graph/badge.svg?token=31KSGMRE8C)](https://codecov.io/gh/hp0404/lastfm-to-sqlite)
 [![Documentation Status](https://readthedocs.org/projects/lastfm/badge/?version=latest)](https://lastfm.readthedocs.io/en/latest/?badge=latest)
 
 
