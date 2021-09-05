@@ -49,8 +49,9 @@ def export_playlist(
         api=api, user=user, first_page=first_page, limit_per_page=limit_per_page,
         extended=extended, start_date=start_date, end_date=end_date
     )
-    for item in data:
-        table.upsert(item, pk="uts_timestamp")
+    with click.progressbar(data) as bar:
+        for item in bar:
+            table.upsert(item, pk="uts_timestamp")
 
 
 if __name__ == "__main__":
