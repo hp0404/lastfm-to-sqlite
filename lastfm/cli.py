@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import click
 from sqlite_utils import Database
-from lastfm.export import get_users_recent_tracks, DATE_FORMAT
+from lastfm import LastFM
 
 
-formats = [DATE_FORMAT]
+formats = [LastFM.DATE_FORMAT]
 
 
 @click.group()
@@ -45,14 +45,16 @@ def export_playlist(
         database = Database(database)
 
     table = database.table(table)
-    data = get_users_recent_tracks(
-        api=api, user=user, first_page=first_page, limit_per_page=limit_per_page,
-        extended=extended, start_date=start_date, end_date=end_date
+    api = LastFM(
+        api=api, username=user, first_page=first_page, 
+        limit_per_page=limit_per_page, extended=extended, 
+        start_date=start_date, end_date=end_date
     )
-    with click.progressbar(data) as bar:
+    data = api.get_users_recent_tracks()
+    with click.progressbar(data, length=api.total_pages) as bar:
         for item in bar:
             table.upsert(item, pk="uts_timestamp")
-
+            bar.update(api.total_pages)
 
 if __name__ == "__main__":
     cli()
