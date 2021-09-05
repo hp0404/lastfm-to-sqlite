@@ -2,9 +2,15 @@
 Installation
 ============
 
-To use or contribute to this library, first checkout the code. Then create a new virtual environment:
+To use this library:
 :: 
-    cd lastfm
+    pip install lastfm-to-sqlite
+::
+
+To contribute to this library, first checkout the code. Then create a new virtual environment:
+:: 
+    git https://github.com/hp0404/lastfm-to-sqlite.git
+    cd lastfm-to-sqlite
     python -m venv venv
     source venv/bin/activate
 ::

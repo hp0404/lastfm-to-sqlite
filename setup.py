@@ -1,7 +1,7 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import os
 
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 
 
 def get_long_description():
@@ -19,14 +19,15 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/hp0404/lastfm-to-sqlite",
     project_urls={
+        "Documentation": "https://lastfm.readthedocs.io/en/latest/",
         "Issues": "https://github.com/hp0404/lastfm-to-sqlite/issues",
         "Changelog": "https://github.com/hp0404/lastfm-to-sqlite/releases",
     },
     license="Apache License, Version 2.0",
     version=VERSION,
-    packages=["lastfm"],
+    packages=find_packages(exclude=["tests", "tests.*"]),
     entry_points={"console_scripts": ["lastfm=lastfm.cli:cli"]},
-    install_requires=["click", "requests", "sqlite-utils"],
+    install_requires=["requests", "sqlite-utils"],
     extras_require={
         "test": ["pytest"],
         "docs": ["sphinx", "sphinx-rtd-theme"]
