@@ -1,7 +1,7 @@
 from setuptools import setup
 import os
 
-VERSION = "0.1"
+VERSION = "0.2.1"
 
 
 def get_long_description():
@@ -13,7 +13,7 @@ def get_long_description():
 
 
 setup(
-    name="lastfm",
+    name="lastfm-to-sqlite",
     description="Scrape LAST.FM playlists to SQLite",
     long_description=get_long_description(),
     long_description_content_type="text/markdown",
@@ -26,7 +26,7 @@ setup(
     version=VERSION,
     packages=["lastfm"],
     entry_points={"console_scripts": ["lastfm=lastfm.cli:cli"]},
-    install_requires=[],
+    install_requires=["click", "requests", "sqlite-utils"],
     extras_require={
         "test": ["pytest"],
         "docs": ["sphinx", "sphinx-rtd-theme"]

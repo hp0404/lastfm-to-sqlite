@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-import os
 import requests
 import datetime
 from time import sleep
-from dotenv import find_dotenv, load_dotenv
 
-
-load_dotenv(find_dotenv())
 URL = "http://ws.audioscrobbler.com/2.0"
-API = os.environ.get("LASTFM_API")
 DATE_FORMAT = "%Y-%m-%d"
 
 
@@ -29,12 +24,13 @@ def export_page(page):
     """ Scrape specific information regarding each song in a playlist. """
     playlist = page["recenttracks"]["track"]
     for song in playlist:
+        date = song.get("date", "")
         yield {
             "artist": song["artist"]["#text"],
             "album": song["album"]["#text"],
             "song": song["name"],
-            "uts_timestamp": song["date"]["uts"],
-            "datetime": song["date"]["#text"]
+            "uts_timestamp": date["uts"] if date else "",
+            "datetime": date["#text"] if date else "",
         }
         
 
@@ -51,17 +47,18 @@ def fetch(session, params, meta):
         
 def get_users_recent_tracks(
     user: str, 
+    api: str,
     first_page: int = 1, 
     limit_per_page: int = 200,
     extended: int = 0,
     start_date=None,
-    end_date=None
+    end_date=None,
 ):
     """ Export user's track history given the parametrs. """
     params = {
         "method": "user.getrecenttracks",
         "user": user,
-        "api_key": API,
+        "api_key": api,
         "page": first_page,
         "limit": limit_per_page,
         "extended": extended,
