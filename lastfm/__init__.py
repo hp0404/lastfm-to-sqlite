@@ -2,16 +2,11 @@
 import datetime
 import requests
 from time import sleep
-from typing import Dict, Iterable, List, Union
-
-
-Song = Dict[str, Union[str, int]]
 
 
 class APIError(Exception):
     """APIError is raised when provided key is invalid
     (should be 32 alphanum characters long)."""
-
     pass
 
 
