@@ -2,7 +2,7 @@ name: Publish Python Package
 
 on:
   release:
-    types: [push, created]
+    types: [created]
 
 jobs:
   test:
@@ -50,8 +50,8 @@ jobs:
         pip install setuptools wheel twine
     - name: Publish
       env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        TWINE_USERNAME: hp0404
+        TWINE_PASSWORD: ${{ secrets.PASSWORD }}
       run: |
         python setup.py sdist bdist_wheel
         twine upload dist/*
