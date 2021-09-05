@@ -50,11 +50,14 @@ def export_playlist(
         limit_per_page=limit_per_page, extended=extended, 
         start_date=start_date, end_date=end_date
     )
-    data = api.get_users_recent_tracks()
-    with click.progressbar(data, length=api.total_pages) as bar:
-        for item in bar:
+    api.ensure_context_created()
+    data = api.fetch()
+    with click.progressbar(length=api.total_pages, label="Fetching data") as bar:
+        for idx, item in enumerate(data):
             table.upsert(item, pk="uts_timestamp")
-            bar.update(api.total_pages)
+            bar.pos = int(idx / api.total_pages * 100)
+            bar.update(0)
+
 
 if __name__ == "__main__":
     cli()

@@ -21,6 +21,7 @@ class LastFM:
         self,
         api: str,
         username: str,
+        method: str = "user.getrecenttracks",
         first_page: int = 1,
         limit_per_page: int = 200,
         extended: int = 0,
@@ -29,6 +30,7 @@ class LastFM:
     ):
         self.api = self._validate_apikey(api)
         self.username = username
+        self.method = method
         self.first_page = first_page
         self.limit_per_page = limit_per_page
         self.extended = extended
@@ -37,7 +39,7 @@ class LastFM:
 
         self.context_created = False
         self.session = None
-        self.total_pages = None
+        self.total_pages = 1
 
     def __del__(self) -> None:
         if self.session:
@@ -71,19 +73,10 @@ class LastFM:
     def ensure_context_created(self) -> None:
         if self.context_created:
             return
+        self.context_created = True
         self.session = requests.Session()
-
-    def fetch(self) -> Iterable[Song]:
-        while self.params["page"] <= self.total_pages:
-            response = self.session.get(LastFM.URL, params=self.params).json()
-            yield from self.process_response(response)
-            self.params["page"] += 1
-            sleep(1)
-
-    def get_users_recent_tracks(self) -> Iterable[Song]:
-        self.ensure_context_created()
         self.params = {
-            "method": "user.getrecenttracks",
+            "method": self.method,
             "user": self.username,
             "api_key": self.api,
             "page": self.first_page,
@@ -95,6 +88,12 @@ class LastFM:
             self.params["from"] = self._convert_to_timestamp(self.start_date)
         if self.end_date is not None:
             self.params["to"] = self._convert_to_timestamp(self.end_date)
-        response = self.session.get(LastFM.URL, params=self.params).json()
-        self.total_pages = int(response["recenttracks"]["@attr"]["totalPages"])
-        yield from self.fetch()
+
+    def fetch(self) -> Iterable[Song]:
+        self.ensure_context_created()
+        while self.params["page"] <= self.total_pages:
+            response = self.session.get(LastFM.URL, params=self.params).json()
+            self.total_pages = int(response["recenttracks"]["@attr"]["totalPages"])
+            yield from self.process_response(response)
+            self.params["page"] += 1
+            sleep(1)
