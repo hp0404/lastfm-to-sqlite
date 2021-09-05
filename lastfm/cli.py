@@ -14,19 +14,21 @@ def cli():
 
 
 @cli.command("export")
+@click.argument("api", type=click.STRING, required=True)
 @click.argument(
     "database",
     type=click.Path(exists=False, file_okay=True, dir_okay=False, allow_dash=False),
     required=True,
 )
 @click.option("-t", "--table", default="playlist", type=click.STRING)
-@click.option("--user", type=click.STRING)
+@click.option("--user", type=click.STRING, required=True)
 @click.option("--first_page", type=click.INT, default=1)
 @click.option("--limit_per_page", type=click.INT, default=200)
 @click.option("--extended", type=click.INT, default=0)
 @click.option("--start_date", type=click.DateTime(formats))
 @click.option("--end_date", type=click.DateTime(formats))
 def export_playlist(
+    api,
     database, 
     table, 
     user, 
@@ -44,7 +46,7 @@ def export_playlist(
 
     table = database.table(table)
     data = get_users_recent_tracks(
-        user=user, first_page=first_page, limit_per_page=limit_per_page,
+        api=api, user=user, first_page=first_page, limit_per_page=limit_per_page,
         extended=extended, start_date=start_date, end_date=end_date
     )
     for item in data:
