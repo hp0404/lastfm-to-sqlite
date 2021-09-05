@@ -14,18 +14,25 @@ Python API
 ----------
 To use Python API
 :: 
-    from lastfm.export import get_users_recent_tracks
+    from lastfm import LastFM
 
-    # playlist is a generator containing all tracks for a given date
-    playlist = get_users_recent_tracks(
-        api="244ec3b62b2501514191234eed07c75d"
-        user="way4music", 
-        start_date="2021-08-15",
+    # specific date, ommit start_date and end_date to download all tracks
+    api = LastFM(
+        api="244ec3b62b2501514191234eed07c75d",
+        username="way4music",
+        start_date="2021-08-21",
         end_date="2021-09-01"
     )
+    data = api.fetch()
+    song = next(data)
+    print(song)
+    container = []
+    for item in data:
+        container.append(item)
+    
 ::
 
-This allows you to work with a trimmed JSON directly. 
+This allows you to work with a trimmed response directly. 
 
     
 ---------
