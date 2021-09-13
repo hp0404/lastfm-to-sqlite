@@ -2,8 +2,7 @@ import os
 import json
 import pytest
 import datetime
-from lastfm.export import get_metadata, export_page, convert_to_timestamp, DATE_FORMAT
-
+from lastfm import LastFM
 
 @pytest.fixture
 def page():    
@@ -13,27 +12,29 @@ def page():
         page = json.load(f)
     return page
 
-
 @pytest.fixture
 def date():
-    return datetime.datetime.today().strftime(DATE_FORMAT)
+    return datetime.datetime.today().strftime(LastFM.DATE_FORMAT)
 
-    
-def test_get_metadata(page):
-    data = get_metadata(page)
-    assert isinstance(data, dict)
-    assert set(data.keys()) == {"page", "total", "user", "perPage", "totalPages"}
-    
-    
-def test_export_page(page):
-    data = [*export_page(page)]
-    song = data[0]
+@pytest.fixture
+def apikey():
+    return "342ec3b62b2501514199059eed07c75a"
+
+@pytest.fixture
+def api(apikey, date):
+    return LastFM(api=apikey, username="way4Music", start_date=date)
+
+def test_convert_to_timestamp(api):
+    assert isinstance(api.start_date, (str, datetime.date))
+    assert isinstance(api._convert_to_timestamp(api.start_date), int)
+
+def test_ensure_context_created(api):
+    api.context_created = True
+    assert api.ensure_context_created() == None
+
+def test_process_response(page):
+    data = LastFM.process_response(page)
+    song = next(data)
     assert isinstance(song, dict)
     assert set(song.keys()) == {"artist", "album", "song", "uts_timestamp", "datetime"}
-    assert all(isinstance(v, str) for v in song.values())
     assert song["artist"] == "Lera Lynn"
-    
-    
-def test_convert_to_timestamp(date):
-    assert isinstance(date, (str, datetime.date))
-    assert isinstance(convert_to_timestamp(date), int)

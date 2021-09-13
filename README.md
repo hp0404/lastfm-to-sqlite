@@ -20,4 +20,23 @@ That will use (or create) a SQLite database called `lastfm_dump.db` and a table 
 
 To scrape specific dates, use `--start_date` and `--end_date`:
 
-    lastfm export 244ec3b62b2501514191234eed07c75 lastfm_dump.db --user way4music --start_date 2021-08-15 --end_date 2021-09-01
+    lastfm export 244ec3b62b2501514191234eed07c75 lastfm_dump.db --user way4music --start_date 2021-08-21 --end_date 2021-09-01
+    
+    
+Python-based API works like this: 
+
+    from lastfm import LastFM
+
+    # specific date, ommit start_date and end_date to download all tracks
+    api = LastFM(
+        api="244ec3b62b2501514191234eed07c75d",
+        username="way4music",
+        start_date="2021-08-21",
+        end_date="2021-09-01"
+    )
+    data = api.fetch()
+    song = next(data)
+    print(song)
+    container = []
+    for item in data:
+        container.append(item)
