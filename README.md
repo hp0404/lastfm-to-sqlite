@@ -1,6 +1,7 @@
 # lastfm-to-sqlite
 
 [![Test](https://github.com/hp0404/lastfm-to-sqlite/actions/workflows/test.yml/badge.svg)](https://github.com/hp0404/lastfm-to-sqlite/actions/workflows/test.yml)
+[![Documentation Status](https://readthedocs.org/projects/lastfm/badge/?version=latest)](https://lastfm.readthedocs.io/en/latest/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/hp0404/lastfm-to-sqlite/blob/main/LICENSE)
 
 Export your [Last.fm](https://www.last.fm/) listening history — scrobbles and

@@ -32,6 +32,10 @@ dev = [
     "ruff>=0.16.1",
     "types-requests>=2.33.0.20260712",
 ]
+docs = [
+    "mkdocs-material>=9.7.7",
+    "mkdocstrings[python]>=1.0.6",
+]
 
 [build-system]
 requires = ["hatchling"]
