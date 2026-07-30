@@ -1,0 +1,36 @@
+site_name: lastfm-to-sqlite
+site_description: Export Last.fm listening history to SQLite
+site_url: https://lastfm.readthedocs.io/
+repo_url: https://github.com/hp0404/lastfm-to-sqlite
+repo_name: hp0404/lastfm-to-sqlite
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: numpy
+            show_source: false
+            members_order: source
+
+nav:
+  - Home: index.md
+  - CLI: cli.md
+  - Python API: api.md

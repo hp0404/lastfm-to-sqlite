@@ -1,62 +1,86 @@
-# -*- coding: utf-8 -*-
+"""Command-line interface: export Last.fm listening history to SQLite."""
+
+from __future__ import annotations
+
+import datetime as dt
+
 import click
 from sqlite_utils import Database
-from lastfm import LastFM
 
+from lastfm.client import DATE_FORMAT, LastFM
 
-formats = [LastFM.DATE_FORMAT]
+api_key_option = click.option(
+    "--api-key",
+    envvar="LASTFM_API_KEY",
+    required=True,
+    help="Last.fm API key (or set LASTFM_API_KEY).",
+)
+user_option = click.option(
+    "--user",
+    envvar="LASTFM_USERNAME",
+    required=True,
+    help="Last.fm username (or set LASTFM_USERNAME).",
+)
+database_argument = click.argument(
+    "database", type=click.Path(dir_okay=False, writable=True)
+)
 
 
 @click.group()
-@click.version_option()
-def cli():
-    "Scrape LASTFM playlists to SQLite"
+@click.version_option(package_name="lastfm-to-sqlite")
+def cli() -> None:
+    """Export Last.fm listening history to SQLite."""
 
 
-@cli.command("export")
-@click.argument("api", type=click.STRING, required=True)
-@click.argument(
-    "database",
-    type=click.Path(exists=False, file_okay=True, dir_okay=False, allow_dash=False),
-    required=True,
+@cli.command()
+@database_argument
+@api_key_option
+@user_option
+@click.option("--table", default="scrobbles", show_default=True, help="Table name.")
+@click.option(
+    "--start-date",
+    type=click.DateTime([DATE_FORMAT]),
+    help="Only export scrobbles on or after this date (YYYY-MM-DD, UTC).",
 )
-@click.option("-t", "--table", default="playlist", type=click.STRING)
-@click.option("--user", type=click.STRING, required=True)
-@click.option("--first_page", type=click.INT, default=1)
-@click.option("--limit_per_page", type=click.INT, default=200)
-@click.option("--extended", type=click.INT, default=0)
-@click.option("--start_date", type=click.DateTime(formats))
-@click.option("--end_date", type=click.DateTime(formats))
-def export_playlist(
-    api,
-    database, 
-    table, 
-    user, 
-    first_page=None, 
-    limit_per_page=None,
-    extended=None,
-    start_date=None,
-    end_date=None
-):
-    """
-    Export user's lastfm playlist
-    """        
-    if not isinstance(database, Database):
-        database = Database(database)
+@click.option(
+    "--end-date",
+    type=click.DateTime([DATE_FORMAT]),
+    help="Only export scrobbles on or before this date (YYYY-MM-DD, UTC).",
+)
+def export(
+    database: str,
+    api_key: str,
+    user: str,
+    table: str,
+    start_date: dt.datetime | None,
+    end_date: dt.datetime | None,
+) -> None:
+    """Export a user's scrobbles (played tracks) to DATABASE."""
+    db = Database(database)
+    with LastFM(api_key) as client:
+        total = client.scrobble_count(user, start_date=start_date, end_date=end_date)
+        tracks = client.recent_tracks(user, start_date=start_date, end_date=end_date)
+        with click.progressbar(
+            tracks, length=total, label=f"Exporting {total} scrobbles"
+        ) as bar:
+            db.table(table).upsert_all(bar, pk="uts_timestamp", batch_size=200)
 
-    table = database.table(table)
-    api = LastFM(
-        api=api, username=user, first_page=first_page, 
-        limit_per_page=limit_per_page, extended=extended, 
-        start_date=start_date, end_date=end_date
-    )
-    api.ensure_context_created()
-    data = api.fetch()
-    with click.progressbar(length=api.total_pages, label="Fetching data") as bar:
-        for idx, item in enumerate(data):
-            table.upsert(item, pk="uts_timestamp")
-            bar.pos = int(idx / api.total_pages * 100)
-            bar.update(0)
+
+@cli.command()
+@database_argument
+@api_key_option
+@user_option
+@click.option("--table", default="loved_tracks", show_default=True, help="Table name.")
+def loved(database: str, api_key: str, user: str, table: str) -> None:
+    """Export a user's loved tracks to DATABASE."""
+    db = Database(database)
+    with LastFM(api_key) as client:
+        total = client.loved_count(user)
+        tracks = client.loved_tracks(user)
+        with click.progressbar(
+            tracks, length=total, label=f"Exporting {total} loved tracks"
+        ) as bar:
+            db.table(table).upsert_all(bar, pk="uts_timestamp", batch_size=200)
 
 
 if __name__ == "__main__":

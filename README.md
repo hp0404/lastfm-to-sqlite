@@ -1,42 +1,90 @@
-# lastfm
+# lastfm-to-sqlite
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/hp0404/lastfm/blob/main/LICENSE)
-[![codecov](https://codecov.io/gh/hp0404/lastfm-to-sqlite/branch/main/graph/badge.svg?token=31KSGMRE8C)](https://codecov.io/gh/hp0404/lastfm-to-sqlite)
-[![Documentation Status](https://readthedocs.org/projects/lastfm/badge/?version=latest)](https://lastfm.readthedocs.io/en/latest/?badge=latest)
+[![Test](https://github.com/hp0404/lastfm-to-sqlite/actions/workflows/test.yml/badge.svg)](https://github.com/hp0404/lastfm-to-sqlite/actions/workflows/test.yml)
+[![Documentation Status](https://readthedocs.org/projects/lastfm/badge/?version=latest)](https://lastfm.readthedocs.io/en/latest/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/hp0404/lastfm-to-sqlite/blob/main/LICENSE)
 
+Export your [Last.fm](https://www.last.fm/) listening history — scrobbles and
+loved tracks — to a SQLite database.
 
-- Scrape [LAST.FM](https://www.last.fm/) user's playlists to SQLite. 
-- Docs: https://lastfm.readthedocs.io/en/latest/
+## Installation
+
+```bash
+uv tool install lastfm-to-sqlite
+# or: pip install lastfm-to-sqlite
+```
+
+## Setup
+
+Grab an API key at https://www.last.fm/api/account/create, then either pass it
+with `--api-key` or export it once:
+
+```bash
+export LASTFM_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+export LASTFM_USERNAME=hp0404   # optional, saves you typing --user
+```
 
 ## Usage
 
-    pip install lastfm-to-sqlite
+Export all scrobbles into `lastfm.db` (table `scrobbles`):
 
-Now run CLI:
+```bash
+lastfm export lastfm.db --user hp0404
+```
 
-    lastfm export 244ec3b62b2501514191234eed07c75d lastfm_dump.db --user Way4Music
+Only a date range:
 
-That will use (or create) a SQLite database called `lastfm_dump.db` and a table called `playlist` to export user's entire playlist. 
+```bash
+lastfm export lastfm.db --user hp0404 --start-date 2021-08-21 --end-date 2021-09-01
+```
 
-To scrape specific dates, use `--start_date` and `--end_date`:
+Loved tracks (table `loved_tracks`):
 
-    lastfm export 244ec3b62b2501514191234eed07c75 lastfm_dump.db --user way4music --start_date 2021-08-21 --end_date 2021-09-01
-    
-    
-Python-based API works like this: 
+```bash
+lastfm loved lastfm.db --user hp0404
+```
 
-    from lastfm import LastFM
+Exports are idempotent: rows are upserted by scrobble timestamp, so re-running
+the command only adds what's new.
 
-    # specific date, ommit start_date and end_date to download all tracks
-    api = LastFM(
-        api="244ec3b62b2501514191234eed07c75d",
-        username="way4music",
-        start_date="2021-08-21",
-        end_date="2021-09-01"
-    )
-    data = api.fetch()
-    song = next(data)
-    print(song)
-    container = []
-    for item in data:
-        container.append(item)
+The resulting database plays nicely with [Datasette](https://datasette.io/)
+and [sqlite-utils](https://sqlite-utils.datasette.io/):
+
+```bash
+sqlite-utils lastfm.db "select artist, count(*) as plays from scrobbles group by artist order by plays desc limit 10"
+```
+
+### Schema
+
+`scrobbles`: `uts_timestamp` (primary key), `datetime` (ISO 8601, UTC),
+`artist`, `artist_mbid`, `album`, `album_mbid`, `track`, `track_mbid`, `url`.
+
+`loved_tracks`: same minus the album columns; `uts_timestamp` is the moment
+the track was loved.
+
+## Python API
+
+```python
+from lastfm import LastFM
+
+with LastFM(api_key="...") as client:
+    for track in client.recent_tracks("hp0404", start_date="2021-08-21"):
+        print(track["datetime"], track["artist"], "-", track["track"])
+
+    for track in client.loved_tracks("hp0404"):
+        print(track["artist"], "-", track["track"])
+```
+
+Both methods are generators that paginate through the Last.fm API for you,
+politely (rate-limited, with retries on transient errors).
+
+## Development
+
+```bash
+git clone https://github.com/hp0404/lastfm-to-sqlite
+cd lastfm-to-sqlite
+uv sync
+uv run pytest
+uv run ruff check .
+uv run mypy .
+```
